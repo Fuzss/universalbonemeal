@@ -22,10 +22,12 @@ public class ServerConfig extends AbstractConfig {
     public boolean allowDeadBush = true;
     @Config(description = "Allow bone meal to work on one block tall flowers making them spread around.")
     public boolean allowFlowers = true;
-    @Config(description = "Allow bone meal to work on coral turning them into reef structures.")
+    @Config(description = "Allow bone meal to work on coral turning them into coral reef tree structures.")
     public boolean allowCorals = true;
-    @Config(description = {"Allow bone meal to work on chorus plants and flowers.", "The algorithm has a range limit of 64 blocks when searching for connected chorus blocks."})
+    @Config(description = {"Allow bone meal to work on chorus plants and flowers.", "The algorithm has a range limit of 48 blocks when searching for connected chorus blocks."})
     public boolean allowChorus = true;
+    @Config(description = "Allow bone meal to work on mycelium blocks, spawning various types of mushrooms in the vicinity.")
+    public boolean allowMycelium = true;
 
     public ServerConfig() {
         super("");

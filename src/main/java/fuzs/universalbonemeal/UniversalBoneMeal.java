@@ -49,6 +49,7 @@ public class UniversalBoneMeal {
         BonemealHandler.registerBehavior(Blocks.HORN_CORAL, CoralBehavior::new, () -> CONFIG.server().allowCorals);
         BonemealHandler.registerBehavior(Blocks.CHORUS_FLOWER, ChorusFlowerBehavior::new, () -> CONFIG.server().allowChorus);
         BonemealHandler.registerBehavior(Blocks.CHORUS_PLANT, ChorusPlantBehavior::new, () -> CONFIG.server().allowChorus);
+        BonemealHandler.registerBehavior(Blocks.MYCELIUM, MyceliumBehavior::new, () -> CONFIG.server().allowMycelium);
     }
 
     private static void registerHandlers() {
