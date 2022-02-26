@@ -24,7 +24,7 @@ public class VineBehavior extends GrowingPlantBehavior {
     }
 
     @Override
-    protected BlockState getNextBlockState(Block sourceBlock, BlockState sourceState) {
+    protected BlockState getGrownBlockState(Block sourceBlock, BlockState sourceState) {
         return sourceState.setValue(VineBlock.UP, false);
     }
 }

@@ -39,6 +39,16 @@ public class UniversalBoneMeal {
         BonemealHandler.registerBehavior(Blocks.NETHER_WART, NetherWartBehavior::new, () -> CONFIG.server().allowNetherWart);
         BonemealHandler.registerBehavior(Blocks.MELON_STEM, StemBehavior::new, () -> CONFIG.server().allowMelonStem);
         BonemealHandler.registerBehavior(Blocks.PUMPKIN_STEM, StemBehavior::new, () -> CONFIG.server().allowPumpkinStem);
+        BonemealHandler.registerBehavior(Blocks.LILY_PAD, SimpleSpreadBehavior::new, () -> CONFIG.server().allowLilyPad);
+        BonemealHandler.registerBehavior(Blocks.DEAD_BUSH, SimpleSpreadBehavior::new, () -> CONFIG.server().allowDeadBush);
+        BonemealHandler.registerBehavior(Blocks.ALLIUM, SimpleSpreadBehavior::new, () -> CONFIG.server().allowFlowers);
+        BonemealHandler.registerBehavior(Blocks.BRAIN_CORAL, CoralBehavior::new, () -> CONFIG.server().allowCorals);
+        BonemealHandler.registerBehavior(Blocks.BUBBLE_CORAL, CoralBehavior::new, () -> CONFIG.server().allowCorals);
+        BonemealHandler.registerBehavior(Blocks.TUBE_CORAL, CoralBehavior::new, () -> CONFIG.server().allowCorals);
+        BonemealHandler.registerBehavior(Blocks.FIRE_CORAL, CoralBehavior::new, () -> CONFIG.server().allowCorals);
+        BonemealHandler.registerBehavior(Blocks.HORN_CORAL, CoralBehavior::new, () -> CONFIG.server().allowCorals);
+        BonemealHandler.registerBehavior(Blocks.CHORUS_FLOWER, ChorusFlowerBehavior::new, () -> CONFIG.server().allowChorus);
+        BonemealHandler.registerBehavior(Blocks.CHORUS_PLANT, ChorusPlantBehavior::new, () -> CONFIG.server().allowChorus);
     }
 
     private static void registerHandlers() {

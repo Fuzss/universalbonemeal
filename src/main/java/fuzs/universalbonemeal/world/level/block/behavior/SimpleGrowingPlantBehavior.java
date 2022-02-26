@@ -22,7 +22,7 @@ public class SimpleGrowingPlantBehavior extends GrowingPlantBehavior {
     }
 
     @Override
-    protected BlockState getNextBlockState(Block sourceBlock, BlockState sourceState) {
+    protected BlockState getGrownBlockState(Block sourceBlock, BlockState sourceState) {
         return sourceBlock.defaultBlockState();
     }
 }

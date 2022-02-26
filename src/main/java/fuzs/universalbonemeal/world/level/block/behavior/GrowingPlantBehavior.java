@@ -38,7 +38,7 @@ public abstract class GrowingPlantBehavior implements BonemealBehavior {
         BlockPos blockpos = topPos.relative(this.growthDirection);
         int j = this.getBlocksToGrowWhenBonemealed(p_53935_);
         for(int k = 0; k < j && this.canGrowInto(level.getBlockState(blockpos)); ++k) {
-            level.setBlockAndUpdate(blockpos, this.getNextBlockState(sourceState.getBlock(), sourceState));
+            level.setBlockAndUpdate(blockpos, this.getGrownBlockState(sourceState.getBlock(), sourceState));
             blockpos = blockpos.relative(this.growthDirection);
         }
     }
@@ -61,5 +61,5 @@ public abstract class GrowingPlantBehavior implements BonemealBehavior {
 
     protected abstract boolean canGrowInto(BlockState state);
 
-    protected abstract BlockState getNextBlockState(Block sourceBlock, BlockState sourceState);
+    protected abstract BlockState getGrownBlockState(Block sourceBlock, BlockState sourceState);
 }
