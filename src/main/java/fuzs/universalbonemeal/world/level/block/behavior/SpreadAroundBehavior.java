@@ -4,60 +4,69 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 
 import java.util.Random;
 
 public abstract class SpreadAroundBehavior implements BonemealBehavior {
+    private final BlockStateProvider blockStateProvider;
+
+    public SpreadAroundBehavior(BlockStateProvider blockStateProvider) {
+        this.blockStateProvider = blockStateProvider;
+    }
+
     @Override
-    public boolean isValidBonemealTarget(BlockGetter p_56091_, BlockPos p_56092_, BlockState p_56093_, boolean p_56094_) {
+    public boolean isValidBonemealTarget(BlockGetter p_55064_, BlockPos p_55065_, BlockState p_55066_, boolean p_55067_) {
         return true;
     }
 
     @Override
-    public boolean isBonemealSuccess(Level p_56096_, Random p_56097_, BlockPos p_56098_, BlockState p_56099_) {
+    public boolean isBonemealSuccess(Level p_55069_, Random p_55070_, BlockPos p_55071_, BlockState p_55072_) {
         return true;
     }
 
     @Override
-    public void performBonemeal(ServerLevel level, Random random, BlockPos sourcePos, BlockState sourceState) {
-        if (!sourceState.canSurvive(level, sourcePos)) return;
-        int j = 1;
-        int l = 0;
-        int spreadRange = this.getSpreadRange();
-        int halfSpreadRange = spreadRange / 2;
-        int i1 = sourcePos.getX() - halfSpreadRange;
-        int j1 = 0;
-        for(int k1 = 0; k1 < spreadRange; ++k1) {
-            for(int l1 = 0; l1 < j; ++l1) {
-                int startY = 2 + sourcePos.getY() - 1;
-                for(int currentY = startY - 2; currentY < startY; ++currentY) {
-                    BlockPos blockpos = new BlockPos(i1 + k1, currentY, sourcePos.getZ() - j1 + l1);
-                    if (blockpos != sourcePos && random.nextInt(this.getSpreadChance()) == 0 && this.canGrowInto(level.getBlockState(blockpos))) {
-                        BlockState blockState = this.getGrownBlockState(sourceState.getBlock(), sourceState);
-                        if (blockState.canSurvive(level, blockpos)) {
-                            level.setBlock(blockpos, blockState, 3);
-                        }
-                    }
+    public void performBonemeal(ServerLevel level, Random random, BlockPos pos, BlockState blockState) {
+        this.placeOverworldGrass(level, random, pos);
+    }
+
+    private void placeNetherVegetation(ServerLevel level, Random random, BlockPos pos) {
+        int i = pos.getY();
+        if (i >= level.getMinBuildHeight() + 1 && i + 1 < level.getMaxBuildHeight()) {
+            final int spreadWidth = this.getSpreadWidth();
+            final int spreadHeight = this.getSpreadHeight();
+            for(int k = 0; k < spreadWidth * spreadWidth; ++k) {
+                BlockPos blockpos1 = pos.offset(random.nextInt(spreadWidth) - random.nextInt(spreadWidth), random.nextInt(spreadHeight) - random.nextInt(spreadHeight), random.nextInt(spreadWidth) - random.nextInt(spreadWidth));
+                BlockState blockstate1 = this.blockStateProvider.getState(random, blockpos1);
+                if (level.isEmptyBlock(blockpos1) && blockpos1.getY() > level.getMinBuildHeight() && blockstate1.canSurvive(level, blockpos1)) {
+                    ((WorldGenLevel) level).setBlock(blockpos1, blockstate1, 2);
                 }
             }
-            if (l < halfSpreadRange) {
-                j += halfSpreadRange;
-                ++j1;
-            } else {
-                j -= halfSpreadRange;
-                --j1;
-            }
-            ++l;
         }
     }
 
-    protected abstract boolean canGrowInto(BlockState p_54321_);
+    private void placeOverworldGrass(ServerLevel level, Random random, BlockPos pos) {
+        int spreadWidth = this.getSpreadWidth();
+        int spreadHeight = this.getSpreadHeight();
+        label46:
+        for(int i = 0; i < spreadWidth * spreadWidth; ++i) {
+            BlockPos blockpos1 = pos;
+            BlockState blockstate1 = this.blockStateProvider.getState(random, blockpos1);
+            for(int j = 0; j < i / this.getSpreadWidth(); ++j) {
+                blockpos1 = blockpos1.offset(random.nextInt(spreadWidth) - 1, (random.nextInt(spreadHeight) - 1) * random.nextInt(spreadHeight) / 2, random.nextInt(spreadWidth) - 1);
+                if (!blockstate1.canSurvive(level, blockpos1.below()) || level.getBlockState(blockpos1).isCollisionShapeFullBlock(level, blockpos1)) {
+                    continue label46;
+                }
+            }
+            if (level.isEmptyBlock(blockpos1) && blockpos1.getY() > level.getMinBuildHeight() && blockstate1.canSurvive(level, blockpos1)) {
+                ((WorldGenLevel) level).setBlock(blockpos1, blockstate1, 2);
+            }
+        }
+    }
 
-    protected abstract BlockState getGrownBlockState(Block sourceBlock, BlockState sourceState);
+    protected abstract int getSpreadWidth();
 
-    protected abstract int getSpreadRange();
-
-    protected abstract int getSpreadChance();
+    protected abstract int getSpreadHeight();
 }

@@ -1,26 +1,19 @@
 package fuzs.universalbonemeal.world.level.block.behavior;
 
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 
 public class SimpleSpreadBehavior extends SpreadAroundBehavior {
-    @Override
-    protected boolean canGrowInto(BlockState p_54321_) {
-        return p_54321_.isAir();
+    public SimpleSpreadBehavior(BlockStateProvider blockStateProvider) {
+        super(blockStateProvider);
     }
 
     @Override
-    protected BlockState getGrownBlockState(Block sourceBlock, BlockState sourceState) {
-        return sourceBlock.defaultBlockState();
+    protected int getSpreadWidth() {
+        return 3;
     }
 
     @Override
-    protected int getSpreadRange() {
-        return 7;
-    }
-
-    @Override
-    protected int getSpreadChance() {
-        return 6;
+    protected int getSpreadHeight() {
+        return 3;
     }
 }
