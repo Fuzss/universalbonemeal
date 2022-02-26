@@ -9,8 +9,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.Random;
 
 public class VineBehavior extends GrowingPlantBehavior {
-    public VineBehavior(Block block) {
-        super(block, Direction.DOWN);
+    public VineBehavior() {
+        super(Direction.DOWN);
     }
 
     @Override

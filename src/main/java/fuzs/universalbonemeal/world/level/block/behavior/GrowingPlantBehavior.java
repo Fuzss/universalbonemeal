@@ -11,11 +11,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.Random;
 
 public abstract class GrowingPlantBehavior implements BonemealBehavior {
-    protected final Block block;
     protected final Direction growthDirection;
 
-    public GrowingPlantBehavior(Block block, Direction growthDirection) {
-        this.block = block;
+    public GrowingPlantBehavior(Direction growthDirection) {
         this.growthDirection = growthDirection;
     }
 
@@ -39,13 +37,10 @@ public abstract class GrowingPlantBehavior implements BonemealBehavior {
     private void performBonemealTop(ServerLevel level, Random p_53935_, BlockPos topPos, BlockState sourceState) {
         BlockPos blockpos = topPos.relative(this.growthDirection);
         int j = this.getBlocksToGrowWhenBonemealed(p_53935_);
-//        int i = Math.min(p_53937_.getValue(AGE) + 1, 25);
         for(int k = 0; k < j && this.canGrowInto(level.getBlockState(blockpos)); ++k) {
-//            p_53934_.setBlockAndUpdate(blockpos, p_53937_.setValue(AGE, Integer.valueOf(i)));
             level.setBlockAndUpdate(blockpos, this.getNextBlockState(sourceState.getBlock(), sourceState));
             blockpos = blockpos.relative(this.growthDirection);
         }
-//            i = Math.min(i + 1, 25);
     }
 
     private BlockPos getHeadPos(BlockGetter p_153323_, BlockPos p_153324_, Block p_153325_) {

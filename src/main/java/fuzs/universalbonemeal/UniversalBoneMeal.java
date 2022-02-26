@@ -5,9 +5,7 @@ import fuzs.puzzleslib.config.ConfigHolder;
 import fuzs.puzzleslib.config.ConfigHolderImpl;
 import fuzs.universalbonemeal.config.ServerConfig;
 import fuzs.universalbonemeal.handler.BonemealHandler;
-import fuzs.universalbonemeal.world.level.block.behavior.CactusBehavior;
-import fuzs.universalbonemeal.world.level.block.behavior.SugarCaneBehavior;
-import fuzs.universalbonemeal.world.level.block.behavior.VineBehavior;
+import fuzs.universalbonemeal.world.level.block.behavior.*;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -35,9 +33,12 @@ public class UniversalBoneMeal {
 
     @SubscribeEvent
     public static void onCommonSetup(final FMLCommonSetupEvent evt) {
-        BonemealHandler.registerBehavior(Blocks.CACTUS, CactusBehavior::new, () -> CONFIG.server().allowCactus);
-        BonemealHandler.registerBehavior(Blocks.SUGAR_CANE, SugarCaneBehavior::new, () -> CONFIG.server().allowSugarCane);
+        BonemealHandler.registerBehavior(Blocks.CACTUS, SimpleGrowingPlantBehavior::new, () -> CONFIG.server().allowCactus);
+        BonemealHandler.registerBehavior(Blocks.SUGAR_CANE, SimpleGrowingPlantBehavior::new, () -> CONFIG.server().allowSugarCane);
         BonemealHandler.registerBehavior(Blocks.VINE, VineBehavior::new, () -> CONFIG.server().allowVines);
+        BonemealHandler.registerBehavior(Blocks.NETHER_WART, NetherWartBehavior::new, () -> CONFIG.server().allowNetherWart);
+        BonemealHandler.registerBehavior(Blocks.MELON_STEM, StemBehavior::new, () -> CONFIG.server().allowMelonStem);
+        BonemealHandler.registerBehavior(Blocks.PUMPKIN_STEM, StemBehavior::new, () -> CONFIG.server().allowPumpkinStem);
     }
 
     private static void registerHandlers() {

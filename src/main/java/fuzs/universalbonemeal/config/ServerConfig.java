@@ -20,6 +20,12 @@ public class ServerConfig extends AbstractConfig {
     public boolean allowSugarCane = true;
     @Config(description = "Allow bone meal to work on vines.")
     public boolean allowVines = true;
+    @Config(description = "Allow bone meal to work on nether warts.")
+    public boolean allowNetherWart = true;
+    @Config(description = "Allow bone meal to work on fully grown melon stems to force producing a melon block.")
+    public boolean allowMelonStem = true;
+    @Config(description = "Allow bone meal to work on fully grown pumpkin stems to force producing a pumpkin block.")
+    public boolean allowPumpkinStem = true;
 
     public ServerConfig() {
         super("");

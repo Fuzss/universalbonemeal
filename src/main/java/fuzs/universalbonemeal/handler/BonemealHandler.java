@@ -14,6 +14,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Map;
 import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 
 public class BonemealHandler {
     private static final Map<Block, Pair<BonemealBehavior, BooleanSupplier>> BONE_MEAL_BEHAVIORS = Maps.newHashMap();
@@ -35,7 +36,7 @@ public class BonemealHandler {
         }
     }
 
-    public static void registerBehavior(Block block, BonemealBehavior.Factory factory, BooleanSupplier config) {
-        BONE_MEAL_BEHAVIORS.put(block, Pair.of(factory.create(block), config));
+    public static void registerBehavior(Block block, Supplier<BonemealBehavior> factory, BooleanSupplier config) {
+        BONE_MEAL_BEHAVIORS.put(block, Pair.of(factory.get(), config));
     }
 }
