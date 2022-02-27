@@ -1,19 +1,21 @@
 package fuzs.universalbonemeal.world.level.block.behavior;
 
-import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
+public class SimpleSpreadBehavior extends SpreadAwayBehavior {
+    private final int spreadWidth;
+    private final int mostSuccesses;
 
-public class SimpleSpreadBehavior extends SpreadAroundBehavior {
-    public SimpleSpreadBehavior(BlockStateProvider blockStateProvider) {
-        super(blockStateProvider);
+    public SimpleSpreadBehavior(int spreadWidth, int mostSuccesses) {
+        this.spreadWidth = spreadWidth;
+        this.mostSuccesses = mostSuccesses;
     }
 
     @Override
     protected int getSpreadWidth() {
-        return 3;
+        return this.spreadWidth;
     }
 
     @Override
-    protected int getSpreadHeight() {
-        return 3;
+    protected int getMostSuccesses() {
+        return this.mostSuccesses;
     }
 }

@@ -29,7 +29,7 @@ public abstract class SpreadAroundBehavior implements BonemealBehavior {
 
     @Override
     public void performBonemeal(ServerLevel level, Random random, BlockPos pos, BlockState blockState) {
-        this.placeOverworldGrass(level, random, pos);
+        this.placeNetherVegetation(level, random, pos);
     }
 
     private void placeNetherVegetation(ServerLevel level, Random random, BlockPos pos) {
@@ -43,25 +43,6 @@ public abstract class SpreadAroundBehavior implements BonemealBehavior {
                 if (level.isEmptyBlock(blockpos1) && blockpos1.getY() > level.getMinBuildHeight() && blockstate1.canSurvive(level, blockpos1)) {
                     ((WorldGenLevel) level).setBlock(blockpos1, blockstate1, 2);
                 }
-            }
-        }
-    }
-
-    private void placeOverworldGrass(ServerLevel level, Random random, BlockPos pos) {
-        int spreadWidth = this.getSpreadWidth();
-        int spreadHeight = this.getSpreadHeight();
-        label46:
-        for(int i = 0; i < spreadWidth * spreadWidth; ++i) {
-            BlockPos blockpos1 = pos;
-            BlockState blockstate1 = this.blockStateProvider.getState(random, blockpos1);
-            for(int j = 0; j < i / this.getSpreadWidth(); ++j) {
-                blockpos1 = blockpos1.offset(random.nextInt(spreadWidth) - 1, (random.nextInt(spreadHeight) - 1) * random.nextInt(spreadHeight) / 2, random.nextInt(spreadWidth) - 1);
-                if (!blockstate1.canSurvive(level, blockpos1.below()) || level.getBlockState(blockpos1).isCollisionShapeFullBlock(level, blockpos1)) {
-                    continue label46;
-                }
-            }
-            if (level.isEmptyBlock(blockpos1) && blockpos1.getY() > level.getMinBuildHeight() && blockstate1.canSurvive(level, blockpos1)) {
-                ((WorldGenLevel) level).setBlock(blockpos1, blockstate1, 2);
             }
         }
     }

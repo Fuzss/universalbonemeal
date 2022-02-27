@@ -6,12 +6,13 @@ import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 import net.minecraft.world.level.levelgen.feature.stateproviders.WeightedStateProvider;
 
 import java.util.Random;
 
 public class MyceliumBehavior extends SpreadAroundBehavior {
-    private static final WeightedStateProvider MYCELIUM_VEGETATION_PROVIDER = new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder().add(Blocks.RED_MUSHROOM.defaultBlockState(), 1).add(Blocks.BROWN_MUSHROOM.defaultBlockState(), 1));
+    private static final BlockStateProvider MYCELIUM_VEGETATION_PROVIDER = new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder().add(Blocks.RED_MUSHROOM.defaultBlockState(), 1).add(Blocks.BROWN_MUSHROOM.defaultBlockState(), 1));
 
     public MyceliumBehavior() {
         super(MYCELIUM_VEGETATION_PROVIDER);

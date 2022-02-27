@@ -4,15 +4,19 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.data.worldgen.features.AquaticFeatures;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.CommonLevelAccessor;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Random;
 
 public class CoralBehavior implements BonemealBehavior {
     @Override
     public boolean isValidBonemealTarget(BlockGetter p_54870_, BlockPos p_54871_, BlockState p_54872_, boolean p_54873_) {
-        return true;
+        return Objects.equals(((CommonLevelAccessor) p_54870_).getBiomeName(p_54871_), Optional.of(Biomes.WARM_OCEAN));
     }
 
     @Override
