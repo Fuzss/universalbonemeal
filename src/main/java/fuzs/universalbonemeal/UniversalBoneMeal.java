@@ -1,5 +1,6 @@
 package fuzs.universalbonemeal;
 
+import com.google.common.collect.Sets;
 import fuzs.puzzleslib.config.AbstractConfig;
 import fuzs.puzzleslib.config.ConfigHolder;
 import fuzs.puzzleslib.config.ConfigHolderImpl;
@@ -32,14 +33,18 @@ public class UniversalBoneMeal {
         registerHandlers();
     }
 
+    private static void registerHandlers() {
+        BonemealHandler bonemealHandler = new BonemealHandler();
+        MinecraftForge.EVENT_BUS.addListener(bonemealHandler::onBonemeal);
+    }
+
     @SubscribeEvent
     public static void onCommonSetup(final FMLCommonSetupEvent evt) {
         BonemealHandler.registerBehavior(Blocks.CACTUS, SimpleGrowingPlantBehavior::new, () -> CONFIG.server().allowCactus);
         BonemealHandler.registerBehavior(Blocks.SUGAR_CANE, SimpleGrowingPlantBehavior::new, () -> CONFIG.server().allowSugarCane);
         BonemealHandler.registerBehavior(Blocks.VINE, VineBehavior::new, () -> CONFIG.server().allowVines);
         BonemealHandler.registerBehavior(Blocks.NETHER_WART, NetherWartBehavior::new, () -> CONFIG.server().allowNetherWart);
-        BonemealHandler.registerBehavior(Blocks.MELON_STEM, StemBehavior::new, () -> CONFIG.server().allowMelonStem);
-        BonemealHandler.registerBehavior(Blocks.PUMPKIN_STEM, StemBehavior::new, () -> CONFIG.server().allowPumpkinStem);
+        BonemealHandler.registerBehavior(Sets.newHashSet(Blocks.MELON_STEM, Blocks.PUMPKIN_STEM), FruitStemBehavior::new, () -> CONFIG.server().allowFruitStems);
         BonemealHandler.registerBehavior(Blocks.LILY_PAD, () -> new SimpleSpreadBehavior(4, 3), () -> CONFIG.server().allowLilyPad);
         BonemealHandler.registerBehavior(Blocks.DEAD_BUSH, () -> new SimpleSpreadBehavior(4, 2), () -> CONFIG.server().allowDeadBush);
         BonemealHandler.registerBehavior(BlockTags.SMALL_FLOWERS, () -> new SimpleSpreadBehavior(3, 1), () -> CONFIG.server().allowSmallFlowers);
@@ -47,10 +52,5 @@ public class UniversalBoneMeal {
         BonemealHandler.registerBehavior(Blocks.CHORUS_FLOWER, ChorusFlowerBehavior::new, () -> CONFIG.server().allowChorus);
         BonemealHandler.registerBehavior(Blocks.CHORUS_PLANT, ChorusPlantBehavior::new, () -> CONFIG.server().allowChorus);
         BonemealHandler.registerBehavior(Blocks.MYCELIUM, MyceliumBehavior::new, () -> CONFIG.server().allowMycelium);
-    }
-
-    private static void registerHandlers() {
-        BonemealHandler bonemealHandler = new BonemealHandler();
-        MinecraftForge.EVENT_BUS.addListener(bonemealHandler::onBonemeal);
     }
 }
