@@ -7,22 +7,29 @@ import fuzs.puzzleslib.config.ConfigHolderImpl;
 import fuzs.universalbonemeal.config.ServerConfig;
 import fuzs.universalbonemeal.handler.BonemealHandler;
 import fuzs.universalbonemeal.world.level.block.behavior.*;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
+import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.util.Unit;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.Executor;
 
 @Mod(UniversalBoneMeal.MOD_ID)
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class UniversalBoneMeal {
     public static final String MOD_ID = "universalbonemeal";
     public static final String MOD_NAME = "Universal Bone Meal";
-    public static final Logger LOGGER = LogManager.getLogger(UniversalBoneMeal.MOD_NAME);
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_NAME);
 
     @SuppressWarnings("Convert2MethodRef")
     public static final ConfigHolder<AbstractConfig, ServerConfig> CONFIG = ConfigHolder.server(() -> new ServerConfig());
@@ -36,6 +43,14 @@ public class UniversalBoneMeal {
     private static void registerHandlers() {
         BonemealHandler bonemealHandler = new BonemealHandler();
         MinecraftForge.EVENT_BUS.addListener(bonemealHandler::onBonemeal);
+        CONFIG.addServerCallback(bonemealHandler::invalidate);
+        MinecraftForge.EVENT_BUS.addListener((final AddReloadListenerEvent evt) -> evt.addListener((PreparableReloadListener.PreparationBarrier p_10638_, ResourceManager p_10639_, ProfilerFiller p_10640_, ProfilerFiller p_10641_, Executor p_10642_, Executor p_10643_) -> {
+            // since we compile tags into blocks we need to refresh whenever tags are reloaded
+            return p_10638_.wait(Unit.INSTANCE).thenRunAsync(() -> {
+                bonemealHandler.invalidate();
+                CoralBehavior.invalidate();
+            });
+        }));
     }
 
     @SubscribeEvent

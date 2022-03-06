@@ -1,10 +1,13 @@
 package fuzs.universalbonemeal.handler;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 import fuzs.universalbonemeal.world.level.block.behavior.BonemealBehavior;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -13,7 +16,9 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.apache.commons.compress.utils.Lists;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
@@ -21,16 +26,13 @@ import java.util.function.Supplier;
 public class BonemealHandler {
     private static final List<AbstractBehaviorData> BONE_MEAL_BEHAVIORS = Lists.newArrayList();
 
+    private Map<Block, BonemealBehavior> blockToBehavior;
+
     @SubscribeEvent
     public void onBonemeal(final BonemealEvent evt) {
+        this.dissolve();
         BlockState block = evt.getBlock();
-        BonemealBehavior behavior = null;
-        for (AbstractBehaviorData data : BONE_MEAL_BEHAVIORS) {
-            if (data.allow() && data.appliesTo(block.getBlock())) {
-                behavior = data.getBehavior();
-                break;
-            }
-        }
+        BonemealBehavior behavior = this.blockToBehavior.get(block.getBlock());
         if (behavior != null) {
             Level level = evt.getWorld();
             BlockPos pos = evt.getPos();
@@ -45,6 +47,22 @@ public class BonemealHandler {
         }
     }
 
+    private void dissolve() {
+        if (this.blockToBehavior == null) {
+            HashMap<Block, BonemealBehavior> map = Maps.newHashMap();
+            for (AbstractBehaviorData behavior : BONE_MEAL_BEHAVIORS) {
+                if (behavior.allow()) {
+                    behavior.compile(map);
+                }
+            }
+            this.blockToBehavior = map;
+        }
+    }
+
+    public void invalidate() {
+        this.blockToBehavior = null;
+    }
+
     public static void registerBehavior(Block block, Supplier<BonemealBehavior> factory, BooleanSupplier config) {
         BONE_MEAL_BEHAVIORS.add(new BlockBehaviorData(block, factory, config));
     }
@@ -53,12 +71,12 @@ public class BonemealHandler {
         BONE_MEAL_BEHAVIORS.add(new MultiBlockBehaviorData(blocks, factory, config));
     }
 
-    public static void registerBehavior(Tag<Block> tag, Supplier<BonemealBehavior> factory, BooleanSupplier config) {
+    public static void registerBehavior(TagKey<Block> tag, Supplier<BonemealBehavior> factory, BooleanSupplier config) {
         BONE_MEAL_BEHAVIORS.add(new BlockTagBehaviorData(tag, factory, config));
     }
 
     private abstract static class AbstractBehaviorData {
-        private final BonemealBehavior behavior;
+        final BonemealBehavior behavior;
         private final BooleanSupplier config;
 
         public AbstractBehaviorData(Supplier<BonemealBehavior> factory, BooleanSupplier config) {
@@ -66,11 +84,7 @@ public class BonemealHandler {
             this.config = config;
         }
 
-        public abstract boolean appliesTo(Block block);
-
-        public BonemealBehavior getBehavior() {
-            return this.behavior;
-        }
+        public abstract void compile(Map<Block, BonemealBehavior> map);
 
         public boolean allow() {
             return this.config.getAsBoolean();
@@ -86,8 +100,8 @@ public class BonemealHandler {
         }
 
         @Override
-        public boolean appliesTo(Block block) {
-            return this.block == block;
+        public void compile(Map<Block, BonemealBehavior> map) {
+            map.put(this.block, this.behavior);
         }
     }
 
@@ -100,22 +114,27 @@ public class BonemealHandler {
         }
 
         @Override
-        public boolean appliesTo(Block block) {
-            return this.targets.contains(block);
+        public void compile(Map<Block, BonemealBehavior> map) {
+            for (Block target : this.targets) {
+                map.put(target, this.behavior);
+            }
         }
     }
 
     private static class BlockTagBehaviorData extends AbstractBehaviorData {
-        private final Tag<Block> tag;
+        private final TagKey<Block> tag;
 
-        public BlockTagBehaviorData(Tag<Block> tag, Supplier<BonemealBehavior> factory, BooleanSupplier config) {
+        public BlockTagBehaviorData(TagKey<Block> tag, Supplier<BonemealBehavior> factory, BooleanSupplier config) {
             super(factory, config);
             this.tag = tag;
         }
 
+        @SuppressWarnings("deprecation")
         @Override
-        public boolean appliesTo(Block block) {
-            return this.tag.contains(block);
+        public void compile(Map<Block, BonemealBehavior> map) {
+            for (Holder<Block> value : Registry.BLOCK.getTagOrEmpty(this.tag)) {
+                map.putIfAbsent(value.value(), this.behavior);
+            }
         }
     }
 }

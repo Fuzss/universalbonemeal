@@ -1,14 +1,17 @@
 package fuzs.universalbonemeal.world.level.block.behavior;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.CommonLevelAccessor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.BaseCoralWallFanBlock;
 import net.minecraft.world.level.block.Block;
@@ -16,13 +19,19 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SeaPickleBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 public class CoralBehavior implements BonemealBehavior {
+    private static Map<Block, Block> plantToBlock;
+
     @Override
     public boolean isValidBonemealTarget(BlockGetter p_54870_, BlockPos p_54871_, BlockState p_54872_, boolean p_54873_) {
-        return Objects.equals(((CommonLevelAccessor) p_54870_).getBiomeName(p_54871_), Optional.of(Biomes.WARM_OCEAN));
+        return ((LevelReader) p_54870_).getBiome(p_54871_).is(Biomes.WARM_OCEAN);
     }
 
     @Override
@@ -37,6 +46,7 @@ public class CoralBehavior implements BonemealBehavior {
 
     private boolean place(ServerLevel p_54860_, BlockPos p_54861_, BlockState p_54862_, Random p_54863_) {
         p_54860_.removeBlock(p_54861_, false);
+        this.dissolve();
         if (this.placeFeature(p_54860_, p_54863_, p_54861_, this.getBlockEquivalent(p_54862_, p_54863_).defaultBlockState())) {
             return true;
         } else {
@@ -45,16 +55,42 @@ public class CoralBehavior implements BonemealBehavior {
         }
     }
 
-    private Block getBlockEquivalent(BlockState blockState, Random random) {
+    public static void invalidate() {
+        plantToBlock = null;
+    }
+
+    private void dissolve() {
+        if (plantToBlock == null) {
+            Map<Block, Block> map = Maps.newHashMap();
+            for (Holder<Block> holder : Registry.BLOCK.getTagOrEmpty(BlockTags.CORAL_PLANTS)) {
+                Block block = this.getBlockEquivalent(holder.value());
+                if (block != null) {
+                    map.put(holder.value(), block);
+                }
+            }
+            plantToBlock = map;
+        }
+    }
+
+    @Nullable
+    private Block getBlockEquivalent(Block block) {
         // hopeful this will be enough for mod compat with e.g. upgrade aquatic
-        String name = ForgeRegistries.BLOCKS.getKey(blockState.getBlock()).getPath();
+        String name = ForgeRegistries.BLOCKS.getKey(block).getPath();
         name = name.substring(0, name.indexOf("_coral"));
-        for (Block block : BlockTags.CORAL_BLOCKS.getValues()) {
-            if (ForgeRegistries.BLOCKS.getKey(block).getPath().contains(name)) {
-                return block;
+        for (Holder<Block> holder : Registry.BLOCK.getTagOrEmpty(BlockTags.CORAL_BLOCKS)) {
+            if (ForgeRegistries.BLOCKS.getKey(holder.value()).getPath().contains(name)) {
+                return holder.value();
             }
         }
-        return BlockTags.CORAL_BLOCKS.getRandomElement(random);
+        return null;
+    }
+
+    private Block getBlockEquivalent(BlockState blockState, Random random) {
+        Block block = plantToBlock.get(blockState.getBlock());
+        if (block != null) return block;
+        return Registry.BLOCK.getTag(BlockTags.CORAL_BLOCKS).flatMap((p_204728_) -> {
+            return p_204728_.getRandomElement(random);
+        }).map(Holder::value).orElseThrow();
     }
 
     private boolean placeFeature(LevelAccessor level, Random random, BlockPos pos, BlockState blockState) {
@@ -122,7 +158,11 @@ public class CoralBehavior implements BonemealBehavior {
             // vanilla always decorates top, resulting in trunks sometimes being cut off
             if (decorateTop) {
                 if (random.nextFloat() < 0.25F) {
-                    level.setBlock(blockpos, BlockTags.CORALS.getRandomElement(random).defaultBlockState(), 2);
+                    Registry.BLOCK.getTag(BlockTags.CORALS).flatMap((p_204731_) -> {
+                        return p_204731_.getRandomElement(random);
+                    }).map(Holder::value).ifPresent((p_204720_) -> {
+                        level.setBlock(blockpos, p_204720_.defaultBlockState(), 2);
+                    });
                 } else if (random.nextFloat() < 0.05F) {
                     level.setBlock(blockpos, Blocks.SEA_PICKLE.defaultBlockState().setValue(SeaPickleBlock.PICKLES, random.nextInt(4) + 1), 2);
                 }
@@ -131,11 +171,15 @@ public class CoralBehavior implements BonemealBehavior {
                 if (random.nextFloat() < 0.2F) {
                     BlockPos blockpos1 = pos.relative(direction);
                     if (level.getBlockState(blockpos1).is(Blocks.WATER)) {
-                        BlockState blockstate1 = BlockTags.WALL_CORALS.getRandomElement(random).defaultBlockState();
-                        if (blockstate1.hasProperty(BaseCoralWallFanBlock.FACING)) {
-                            blockstate1 = blockstate1.setValue(BaseCoralWallFanBlock.FACING, direction);
-                        }
-                        level.setBlock(blockpos1, blockstate1, 2);
+                        Registry.BLOCK.getTag(BlockTags.WALL_CORALS).flatMap((p_204728_) -> {
+                            return p_204728_.getRandomElement(random);
+                        }).map(Holder::value).ifPresent((p_204725_) -> {
+                            BlockState blockstate1 = p_204725_.defaultBlockState();
+                            if (blockstate1.hasProperty(BaseCoralWallFanBlock.FACING)) {
+                                blockstate1 = blockstate1.setValue(BaseCoralWallFanBlock.FACING, direction);
+                            }
+                            level.setBlock(blockpos1, blockstate1, 2);
+                        });
                     }
                 }
             }
