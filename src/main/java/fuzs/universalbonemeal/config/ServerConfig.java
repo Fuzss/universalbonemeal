@@ -26,6 +26,8 @@ public class ServerConfig extends AbstractConfig {
     public boolean allowChorus = true;
     @Config(description = "Allow bone meal to work on mycelium blocks, spawning various types of mushrooms in the vicinity.")
     public boolean allowMycelium = true;
+    @Config(description = "Allow bone meal to work on all kinds of dirt blocks for converting into a grass block or mycelium when such a block is right next to it.")
+    public boolean allowDirt = true;
 
     public ServerConfig() {
         super("");

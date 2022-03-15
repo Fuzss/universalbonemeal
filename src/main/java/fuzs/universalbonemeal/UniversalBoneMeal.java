@@ -55,6 +55,10 @@ public class UniversalBoneMeal {
 
     @SubscribeEvent
     public static void onCommonSetup(final FMLCommonSetupEvent evt) {
+        registerBonemealBehaviors();
+    }
+
+    private static void registerBonemealBehaviors() {
         BonemealHandler.registerBehavior(Blocks.CACTUS, SimpleGrowingPlantBehavior::new, () -> CONFIG.server().allowCactus);
         BonemealHandler.registerBehavior(Blocks.SUGAR_CANE, SimpleGrowingPlantBehavior::new, () -> CONFIG.server().allowSugarCane);
         BonemealHandler.registerBehavior(Blocks.VINE, VineBehavior::new, () -> CONFIG.server().allowVines);
@@ -67,5 +71,6 @@ public class UniversalBoneMeal {
         BonemealHandler.registerBehavior(Blocks.CHORUS_FLOWER, ChorusFlowerBehavior::new, () -> CONFIG.server().allowChorus);
         BonemealHandler.registerBehavior(Blocks.CHORUS_PLANT, ChorusPlantBehavior::new, () -> CONFIG.server().allowChorus);
         BonemealHandler.registerBehavior(Blocks.MYCELIUM, MyceliumBehavior::new, () -> CONFIG.server().allowMycelium);
+        BonemealHandler.registerBehavior(Sets.newHashSet(Blocks.DIRT, Blocks.COARSE_DIRT, Blocks.FARMLAND, Blocks.DIRT_PATH), DirtBehavior::new, () -> CONFIG.server().allowDirt);
     }
 }
