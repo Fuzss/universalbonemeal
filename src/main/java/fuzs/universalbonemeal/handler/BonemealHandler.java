@@ -1,6 +1,7 @@
 package fuzs.universalbonemeal.handler;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import fuzs.universalbonemeal.world.level.block.behavior.BonemealBehavior;
 import net.minecraft.core.BlockPos;
@@ -14,7 +15,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.event.entity.player.BonemealEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import org.apache.commons.compress.utils.Lists;
 
 import java.util.HashMap;
 import java.util.List;

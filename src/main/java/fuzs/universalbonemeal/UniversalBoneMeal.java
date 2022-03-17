@@ -71,6 +71,6 @@ public class UniversalBoneMeal {
         BonemealHandler.registerBehavior(Blocks.CHORUS_FLOWER, ChorusFlowerBehavior::new, () -> CONFIG.server().allowChorus);
         BonemealHandler.registerBehavior(Blocks.CHORUS_PLANT, ChorusPlantBehavior::new, () -> CONFIG.server().allowChorus);
         BonemealHandler.registerBehavior(Blocks.MYCELIUM, MyceliumBehavior::new, () -> CONFIG.server().allowMycelium);
-        BonemealHandler.registerBehavior(Sets.newHashSet(Blocks.DIRT, Blocks.COARSE_DIRT, Blocks.FARMLAND, Blocks.DIRT_PATH), DirtBehavior::new, () -> CONFIG.server().allowDirt);
+        BonemealHandler.registerBehavior(Sets.newHashSet(Blocks.DIRT, Blocks.COARSE_DIRT, Blocks.DIRT_PATH), DirtBehavior::new, () -> CONFIG.server().allowDirt);
     }
 }
