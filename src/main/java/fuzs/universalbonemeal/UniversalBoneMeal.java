@@ -7,22 +7,16 @@ import fuzs.puzzleslib.config.ConfigHolderImpl;
 import fuzs.universalbonemeal.config.ServerConfig;
 import fuzs.universalbonemeal.handler.BonemealHandler;
 import fuzs.universalbonemeal.world.level.block.behavior.*;
-import net.minecraft.server.packs.resources.PreparableReloadListener;
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.Unit;
-import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.Executor;
 
 @Mod(UniversalBoneMeal.MOD_ID)
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -44,13 +38,20 @@ public class UniversalBoneMeal {
         BonemealHandler bonemealHandler = new BonemealHandler();
         MinecraftForge.EVENT_BUS.addListener(bonemealHandler::onBonemeal);
         CONFIG.addServerCallback(bonemealHandler::invalidate);
-        MinecraftForge.EVENT_BUS.addListener((final AddReloadListenerEvent evt) -> evt.addListener((PreparableReloadListener.PreparationBarrier p_10638_, ResourceManager p_10639_, ProfilerFiller p_10640_, ProfilerFiller p_10641_, Executor p_10642_, Executor p_10643_) -> {
-            // since we compile tags into blocks we need to refresh whenever tags are reloaded
-            return p_10638_.wait(Unit.INSTANCE).thenRunAsync(() -> {
-                bonemealHandler.invalidate();
-                CoralBehavior.invalidate();
-            });
-        }));
+        // TagsUpdatedEvent below should do the same without having to worry about any concurrency issues
+//        MinecraftForge.EVENT_BUS.addListener((final AddReloadListenerEvent evt) -> evt.addListener((PreparableReloadListener.PreparationBarrier p_10638_, ResourceManager p_10639_, ProfilerFiller p_10640_, ProfilerFiller p_10641_, Executor p_10642_, Executor p_10643_) -> {
+//            // since we compile tags into blocks we need to refresh whenever tags are reloaded
+//            return p_10638_.wait(Unit.INSTANCE).thenRunAsync(() -> {
+//                bonemealHandler.invalidate();
+//                CoralBehavior.invalidate();
+//            }, p_10643_);
+//        }));
+        // since we compile tags into blocks we need to refresh whenever tags are reloaded
+        // is fired on both sides, we only need server, but there doesn't seem to be an easy way to prevent triggering on client side
+        MinecraftForge.EVENT_BUS.addListener((final TagsUpdatedEvent evt) -> {
+            bonemealHandler.invalidate();
+            CoralBehavior.invalidate();
+        });
     }
 
     @SubscribeEvent
