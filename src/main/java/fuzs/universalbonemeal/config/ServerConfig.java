@@ -28,6 +28,8 @@ public class ServerConfig extends AbstractConfig {
     public boolean allowMycelium = true;
     @Config(description = "Allow bone meal to work on all kinds of dirt blocks for converting into a grass block or mycelium when such a block is right next to it.")
     public boolean allowDirt = true;
+    @Config(description = "Allow bone meal to work on podzol for creating ferns and sweet berry bushes.")
+    public boolean allowPodzol = true;
 
     public ServerConfig() {
         super("");
