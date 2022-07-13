@@ -3,7 +3,7 @@ package fuzs.universalbonemeal;
 import com.google.common.collect.Sets;
 import fuzs.puzzleslib.config.AbstractConfig;
 import fuzs.puzzleslib.config.ConfigHolder;
-import fuzs.puzzleslib.core.Services;
+import fuzs.puzzleslib.core.CoreServices;
 import fuzs.universalbonemeal.config.ServerConfig;
 import fuzs.universalbonemeal.handler.BonemealHandler;
 import fuzs.universalbonemeal.world.level.block.behavior.*;
@@ -18,7 +18,7 @@ public class UniversalBoneMeal {
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_NAME);
 
     @SuppressWarnings("Convert2MethodRef")
-    public static final ConfigHolder<AbstractConfig, ServerConfig> CONFIG = Services.FACTORIES.serverConfig(() -> new ServerConfig());
+    public static final ConfigHolder<AbstractConfig, ServerConfig> CONFIG = CoreServices.FACTORIES.serverConfig(() -> new ServerConfig());
 
     public static void onConstructMod() {
         CONFIG.loadConfigs(MOD_ID);

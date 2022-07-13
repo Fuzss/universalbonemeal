@@ -1,6 +1,6 @@
 package fuzs.universalbonemeal.world.level.block.behavior;
 
-import fuzs.universalbonemeal.core.ModServices;
+import fuzs.universalbonemeal.core.ModCoreServices;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -28,7 +28,7 @@ public class FruitStemBehavior implements BonemealBehavior {
         BlockPos blockpos = sourcePos.relative(direction);
         BlockState blockstate = level.getBlockState(blockpos.below());
         Block block = blockstate.getBlock();
-        return level.isEmptyBlock(blockpos) && (ModServices.ABSTRACTIONS.canSustainPlant(blockstate, level, blockpos.below(), Direction.UP, sourceBlock.getBlock()) || block == Blocks.FARMLAND || block == Blocks.DIRT || block == Blocks.COARSE_DIRT || block == Blocks.PODZOL || block == Blocks.GRASS_BLOCK);
+        return level.isEmptyBlock(blockpos) && (ModCoreServices.ABSTRACTIONS.canSustainPlant(blockstate, level, blockpos.below(), Direction.UP, sourceBlock.getBlock()) || block == Blocks.FARMLAND || block == Blocks.DIRT || block == Blocks.COARSE_DIRT || block == Blocks.PODZOL || block == Blocks.GRASS_BLOCK);
     }
 
     @Override

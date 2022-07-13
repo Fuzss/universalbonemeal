@@ -25,7 +25,7 @@ public class UniversalBoneMealForge {
     private static void registerHandlers() {
         BonemealHandler bonemealHandler = new BonemealHandler();
         MinecraftForge.EVENT_BUS.addListener((final BonemealEvent evt) -> {
-            InteractionResult result = bonemealHandler.onBonemeal(evt.getWorld(), evt.getPos(), evt.getBlock(), evt.getStack());
+            InteractionResult result = bonemealHandler.onBonemeal(evt.getLevel(), evt.getPos(), evt.getBlock(), evt.getStack());
             if (result == InteractionResult.SUCCESS) {
                 evt.setResult(Event.Result.ALLOW);
             }
