@@ -1,9 +1,9 @@
 package fuzs.universalbonemeal.config;
 
-import fuzs.puzzleslib.config.AbstractConfig;
+import fuzs.puzzleslib.config.ConfigCore;
 import fuzs.puzzleslib.config.annotation.Config;
 
-public class ServerConfig extends AbstractConfig {
+public class ServerConfig implements ConfigCore {
     @Config(description = "Allow bone meal to work on cactus.")
     public boolean allowCactus = true;
     @Config(description = "Allow bone meal to work on sugar canes.")
@@ -30,8 +30,4 @@ public class ServerConfig extends AbstractConfig {
     public boolean allowDirt = true;
     @Config(description = "Allow bone meal to work on podzol for creating ferns and sweet berry bushes.")
     public boolean allowPodzol = true;
-
-    public ServerConfig() {
-        super("");
-    }
 }

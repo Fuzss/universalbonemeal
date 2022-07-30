@@ -1,5 +1,7 @@
 package fuzs.universalbonemeal;
 
+import fuzs.puzzleslib.core.CoreServices;
+import fuzs.universalbonemeal.config.ServerConfig;
 import fuzs.universalbonemeal.handler.BonemealHandler;
 import fuzs.universalbonemeal.world.level.block.behavior.CoralBehavior;
 import net.minecraft.world.InteractionResult;
@@ -9,7 +11,6 @@ import net.minecraftforge.event.entity.player.BonemealEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 
 @Mod(UniversalBoneMeal.MOD_ID)
@@ -18,7 +19,7 @@ public class UniversalBoneMealForge {
 
     @SubscribeEvent
     public static void onConstructMod(final FMLConstructModEvent evt) {
-        UniversalBoneMeal.onConstructMod();
+        CoreServices.FACTORIES.modConstructor(UniversalBoneMeal.MOD_ID).accept(new UniversalBoneMeal());
         registerHandlers();
     }
 
@@ -30,17 +31,12 @@ public class UniversalBoneMealForge {
                 evt.setResult(Event.Result.ALLOW);
             }
         });
-        UniversalBoneMeal.CONFIG.addServerCallback(bonemealHandler::invalidate);
+        UniversalBoneMeal.CONFIG.getHolder(ServerConfig.class).accept(bonemealHandler::invalidate);
         // since we compile tags into blocks we need to refresh whenever tags are reloaded
         // is fired on both sides, we only need server, but there doesn't seem to be an easy way to prevent triggering on client side
         MinecraftForge.EVENT_BUS.addListener((final TagsUpdatedEvent evt) -> {
             bonemealHandler.invalidate();
             CoralBehavior.invalidate();
         });
-    }
-
-    @SubscribeEvent
-    public static void onCommonSetup(final FMLCommonSetupEvent evt) {
-        UniversalBoneMeal.onCommonSetup();
     }
 }
