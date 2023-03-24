@@ -5,11 +5,10 @@ import com.google.common.collect.Maps;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
@@ -29,7 +28,7 @@ public class CoralBehavior implements BonemealBehavior {
     private static Map<Block, Block> plantToBlock;
 
     @Override
-    public boolean isValidBonemealTarget(BlockGetter p_54870_, BlockPos p_54871_, BlockState p_54872_, boolean p_54873_) {
+    public boolean isValidBonemealTarget(LevelReader p_54870_, BlockPos p_54871_, BlockState p_54872_, boolean p_54873_) {
         return ((LevelReader) p_54870_).getBiome(p_54871_).is(Biomes.WARM_OCEAN);
     }
 
@@ -61,7 +60,7 @@ public class CoralBehavior implements BonemealBehavior {
     private void dissolve() {
         if (plantToBlock == null) {
             Map<Block, Block> map = Maps.newHashMap();
-            for (Holder<Block> holder : Registry.BLOCK.getTagOrEmpty(BlockTags.CORAL_PLANTS)) {
+            for (Holder<Block> holder : BuiltInRegistries.BLOCK.getTagOrEmpty(BlockTags.CORAL_PLANTS)) {
                 Block block = this.getBlockEquivalent(holder.value());
                 if (block != null) {
                     map.put(holder.value(), block);
@@ -74,10 +73,10 @@ public class CoralBehavior implements BonemealBehavior {
     @Nullable
     private Block getBlockEquivalent(Block block) {
         // hopeful this will be enough for mod compat with e.g. upgrade aquatic
-        String name = Registry.BLOCK.getKey(block).getPath();
+        String name = BuiltInRegistries.BLOCK.getKey(block).getPath();
         name = name.substring(0, name.indexOf("_coral"));
-        for (Holder<Block> holder : Registry.BLOCK.getTagOrEmpty(BlockTags.CORAL_BLOCKS)) {
-            if (Registry.BLOCK.getKey(holder.value()).getPath().contains(name)) {
+        for (Holder<Block> holder : BuiltInRegistries.BLOCK.getTagOrEmpty(BlockTags.CORAL_BLOCKS)) {
+            if (BuiltInRegistries.BLOCK.getKey(holder.value()).getPath().contains(name)) {
                 return holder.value();
             }
         }
@@ -87,7 +86,7 @@ public class CoralBehavior implements BonemealBehavior {
     private Block getBlockEquivalent(BlockState blockState, RandomSource random) {
         Block block = plantToBlock.get(blockState.getBlock());
         if (block != null) return block;
-        return Registry.BLOCK.getTag(BlockTags.CORAL_BLOCKS).flatMap((p_204728_) -> {
+        return BuiltInRegistries.BLOCK.getTag(BlockTags.CORAL_BLOCKS).flatMap((p_204728_) -> {
             return p_204728_.getRandomElement(random);
         }).map(Holder::value).orElseThrow();
     }
@@ -157,7 +156,7 @@ public class CoralBehavior implements BonemealBehavior {
             // vanilla always decorates top, resulting in trunks sometimes being cut off
             if (decorateTop) {
                 if (random.nextFloat() < 0.25F) {
-                    Registry.BLOCK.getTag(BlockTags.CORALS).flatMap((p_204731_) -> {
+                    BuiltInRegistries.BLOCK.getTag(BlockTags.CORALS).flatMap((p_204731_) -> {
                         return p_204731_.getRandomElement(random);
                     }).map(Holder::value).ifPresent((p_204720_) -> {
                         level.setBlock(blockpos, p_204720_.defaultBlockState(), 2);
@@ -170,7 +169,7 @@ public class CoralBehavior implements BonemealBehavior {
                 if (random.nextFloat() < 0.2F) {
                     BlockPos blockpos1 = pos.relative(direction);
                     if (level.getBlockState(blockpos1).is(Blocks.WATER)) {
-                        Registry.BLOCK.getTag(BlockTags.WALL_CORALS).flatMap((p_204728_) -> {
+                        BuiltInRegistries.BLOCK.getTag(BlockTags.WALL_CORALS).flatMap((p_204728_) -> {
                             return p_204728_.getRandomElement(random);
                         }).map(Holder::value).ifPresent((p_204725_) -> {
                             BlockState blockstate1 = p_204725_.defaultBlockState();

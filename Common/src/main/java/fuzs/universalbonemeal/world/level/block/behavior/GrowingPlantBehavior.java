@@ -6,6 +6,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -17,7 +18,7 @@ public abstract class GrowingPlantBehavior implements BonemealBehavior {
     }
 
     @Override
-    public boolean isValidBonemealTarget(BlockGetter p_53900_, BlockPos p_53901_, BlockState p_53902_, boolean p_53903_) {
+    public boolean isValidBonemealTarget(LevelReader p_53900_, BlockPos p_53901_, BlockState p_53902_, boolean p_53903_) {
         BlockPos headPos = this.getHeadPos(p_53900_, p_53901_, p_53902_.getBlock());
         return this.canGrowInto(p_53900_.getBlockState(headPos.relative(this.growthDirection)));
     }

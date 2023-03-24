@@ -6,6 +6,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.PipeBlock;
@@ -17,8 +18,9 @@ import java.util.Map;
 import java.util.Set;
 
 public class ChorusPlantBehavior extends ChorusFlowerBehavior {
+
     @Override
-    public boolean isValidBonemealTarget(BlockGetter p_50897_, BlockPos p_50898_, BlockState p_50899_, boolean p_50900_) {
+    public boolean isValidBonemealTarget(LevelReader p_50897_, BlockPos p_50898_, BlockState p_50899_, boolean p_50900_) {
         for (BlockPos flowerPosition : this.getFlowerPositions(p_50897_, p_50898_)) {
             if (super.isValidBonemealTarget(p_50897_, flowerPosition, p_50897_.getBlockState(flowerPosition), p_50900_)) return true;
         }

@@ -1,9 +1,10 @@
 package fuzs.universalbonemeal;
 
 import com.google.common.collect.Sets;
-import fuzs.puzzleslib.config.ConfigHolder;
-import fuzs.puzzleslib.core.CoreServices;
-import fuzs.puzzleslib.core.ModConstructor;
+import fuzs.puzzleslib.api.config.v3.ConfigHolder;
+import fuzs.puzzleslib.api.core.v1.ModConstructor;
+import fuzs.puzzleslib.api.core.v1.context.ModLifecycleContext;
+import fuzs.puzzleslib.api.event.v1.entity.player.BonemealCallback;
 import fuzs.universalbonemeal.config.ServerConfig;
 import fuzs.universalbonemeal.handler.BonemealHandler;
 import fuzs.universalbonemeal.world.level.block.behavior.*;
@@ -17,16 +18,20 @@ public class UniversalBoneMeal implements ModConstructor {
     public static final String MOD_NAME = "Universal Bone Meal";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_NAME);
 
-    @SuppressWarnings("Convert2MethodRef")
-    public static final ConfigHolder CONFIG = CoreServices.FACTORIES.serverConfig(ServerConfig.class, () -> new ServerConfig());
+    public static final ConfigHolder CONFIG = ConfigHolder.builder(MOD_ID).server(ServerConfig.class);
 
     @Override
     public void onConstructMod() {
-        CONFIG.bakeConfigs(MOD_ID);
+        UniversalBoneMeal.CONFIG.getHolder(ServerConfig.class).accept(BonemealHandler::invalidate);
+        registerHandlers();
+    }
+
+    private static void registerHandlers() {
+        BonemealCallback.EVENT.register(BonemealHandler::onBonemeal);
     }
 
     @Override
-    public void onCommonSetup() {
+    public void onCommonSetup(ModLifecycleContext context) {
         registerBonemealBehaviors();
     }
 

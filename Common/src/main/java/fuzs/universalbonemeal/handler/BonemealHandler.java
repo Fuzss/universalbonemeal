@@ -3,13 +3,13 @@ package fuzs.universalbonemeal.handler;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import fuzs.puzzleslib.api.event.v1.core.EventResult;
 import fuzs.universalbonemeal.world.level.block.behavior.BonemealBehavior;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -25,11 +25,11 @@ import java.util.function.Supplier;
 public class BonemealHandler {
     private static final List<AbstractBehaviorData> BONE_MEAL_BEHAVIORS = Lists.newArrayList();
 
-    private Map<Block, BonemealBehavior> blockToBehavior;
+    private static Map<Block, BonemealBehavior> blockToBehavior;
 
-    public InteractionResult onBonemeal(Level level, BlockPos pos, BlockState block, ItemStack stack) {
-        this.dissolve();
-        BonemealBehavior behavior = this.blockToBehavior.get(block.getBlock());
+    public static EventResult onBonemeal(Level level, BlockPos pos, BlockState block, ItemStack stack) {
+        dissolve();
+        BonemealBehavior behavior = blockToBehavior.get(block.getBlock());
         if (behavior != null) {
             if (behavior.isValidBonemealTarget(level, pos, block, level.isClientSide)) {
                 if (level instanceof ServerLevel) {
@@ -37,26 +37,26 @@ public class BonemealHandler {
                         behavior.performBonemeal((ServerLevel) level, level.random, pos, block);
                     }
                 }
-                return InteractionResult.SUCCESS;
+                return EventResult.ALLOW;
             }
         }
-        return InteractionResult.PASS;
+        return EventResult.PASS;
     }
 
-    private void dissolve() {
-        if (this.blockToBehavior == null) {
+    private static void dissolve() {
+        if (blockToBehavior == null) {
             HashMap<Block, BonemealBehavior> map = Maps.newHashMap();
             for (AbstractBehaviorData behavior : BONE_MEAL_BEHAVIORS) {
                 if (behavior.allow()) {
                     behavior.compile(map);
                 }
             }
-            this.blockToBehavior = map;
+            blockToBehavior = map;
         }
     }
 
-    public void invalidate() {
-        this.blockToBehavior = null;
+    public static void invalidate() {
+        blockToBehavior = null;
     }
 
     public static void registerBehavior(Block block, Supplier<BonemealBehavior> factory, BooleanSupplier config) {
@@ -127,7 +127,7 @@ public class BonemealHandler {
 
         @Override
         public void compile(Map<Block, BonemealBehavior> map) {
-            for (Holder<Block> value : Registry.BLOCK.getTagOrEmpty(this.tag)) {
+            for (Holder<Block> value : BuiltInRegistries.BLOCK.getTagOrEmpty(this.tag)) {
                 map.putIfAbsent(value.value(), this.behavior);
             }
         }

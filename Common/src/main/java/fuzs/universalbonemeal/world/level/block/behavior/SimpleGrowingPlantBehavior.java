@@ -4,17 +4,19 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
 
 public class SimpleGrowingPlantBehavior extends GrowingPlantBehavior {
+
     public SimpleGrowingPlantBehavior() {
         super(Direction.UP);
     }
 
     @Override
-    public boolean isValidBonemealTarget(BlockGetter p_53900_, BlockPos p_53901_, BlockState p_53902_, boolean p_53903_) {
+    public boolean isValidBonemealTarget(LevelReader p_53900_, BlockPos p_53901_, BlockState p_53902_, boolean p_53903_) {
         if (this.getConnectedPlantHeight(p_53900_, p_53901_, p_53902_.getBlock()) < this.getMaxHeightAtPosition(p_53901_.getX(), p_53901_.getZ())) {
             return super.isValidBonemealTarget(p_53900_, p_53901_, p_53902_, p_53903_);
         }
