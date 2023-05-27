@@ -36,7 +36,7 @@ public class ChorusPlantBehavior extends ChorusFlowerBehavior {
 
     private Collection<BlockPos> getFlowerPositions(BlockGetter level, BlockPos startPos) {
         Set<BlockPos> targets = Sets.newHashSet();
-        getTopConnectedBlock(level, startPos.mutable(), Blocks.CHORUS_PLANT, Blocks.CHORUS_FLOWER, targets, Direction.DOWN, 48);
+        getTopConnectedBlock(level, startPos.mutable(), Blocks.CHORUS_PLANT, Blocks.CHORUS_FLOWER, targets, Direction.DOWN, 128);
         return targets;
     }
 
