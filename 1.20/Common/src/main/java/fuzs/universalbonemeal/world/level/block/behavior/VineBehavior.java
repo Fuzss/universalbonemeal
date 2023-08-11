@@ -8,6 +8,7 @@ import net.minecraft.world.level.block.VineBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class VineBehavior extends GrowingPlantBehavior {
+
     public VineBehavior() {
         super(Direction.DOWN);
     }

@@ -15,12 +15,12 @@ import net.minecraft.world.level.block.state.BlockState;
 public class FruitStemBehavior implements BonemealBehavior {
 
     @Override
-    public boolean isValidBonemealTarget(LevelReader p_50897_, BlockPos p_50898_, BlockState p_50899_, boolean p_50900_) {
+    public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state, boolean isClient) {
         // let vanilla run otherwise
-        if (p_50899_.getValue(StemBlock.AGE) != 7) return false;
+        if (!state.hasProperty(StemBlock.AGE) || state.getValue(StemBlock.AGE) != 7) return false;
         // no need to check if attached to a fruit already, since attached stems are completely different block for some reason
-        return Direction.Plane.HORIZONTAL.stream().anyMatch((p_153316_) -> {
-            return this.canSustainPlant((LevelReader) p_50897_, p_50898_, p_50899_, p_153316_);
+        return Direction.Plane.HORIZONTAL.stream().anyMatch(direction -> {
+            return this.canSustainPlant(level, pos, state, direction);
         });
     }
 
@@ -32,12 +32,15 @@ public class FruitStemBehavior implements BonemealBehavior {
     }
 
     @Override
-    public boolean isBonemealSuccess(Level p_50901_, RandomSource p_50902_, BlockPos p_50903_, BlockState p_50904_) {
+    public boolean isBonemealSuccess(Level level, RandomSource random, BlockPos pos, BlockState state) {
         return true;
     }
 
     @Override
-    public void performBonemeal(ServerLevel p_57021_, RandomSource p_57022_, BlockPos p_57023_, BlockState p_57024_) {
-        p_57024_.randomTick(p_57021_, p_57023_, p_57021_.random);
+    public void performBonemeal(ServerLevel level, RandomSource random, BlockPos pos, BlockState state) {
+        // growing fruit from stem blocks takes forever, let's speed it up a little
+        while (level.getBlockState(pos) == state && random.nextInt(3) != 0) {
+            state.randomTick(level, pos, random);
+        }
     }
 }

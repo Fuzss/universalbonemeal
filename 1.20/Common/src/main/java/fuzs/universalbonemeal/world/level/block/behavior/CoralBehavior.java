@@ -29,7 +29,7 @@ public class CoralBehavior implements BonemealBehavior {
 
     @Override
     public boolean isValidBonemealTarget(LevelReader p_54870_, BlockPos p_54871_, BlockState p_54872_, boolean p_54873_) {
-        return ((LevelReader) p_54870_).getBiome(p_54871_).is(Biomes.WARM_OCEAN);
+        return p_54870_.getBiome(p_54871_).is(Biomes.WARM_OCEAN);
     }
 
     @Override

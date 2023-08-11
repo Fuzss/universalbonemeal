@@ -12,17 +12,17 @@ import net.minecraft.world.level.block.state.BlockState;
 public class ChorusFlowerBehavior implements BonemealBehavior {
 
     @Override
-    public boolean isValidBonemealTarget(LevelReader p_50897_, BlockPos p_50898_, BlockState p_50899_, boolean p_50900_) {
-        return p_50899_.getValue(ChorusFlowerBlock.AGE) < 5;
+    public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState blockState, boolean isClient) {
+        return blockState.hasProperty(ChorusFlowerBlock.AGE) && blockState.getValue(ChorusFlowerBlock.AGE) < 5;
     }
 
     @Override
-    public boolean isBonemealSuccess(Level p_50901_, RandomSource p_50902_, BlockPos p_50903_, BlockState p_50904_) {
+    public boolean isBonemealSuccess(Level level, RandomSource random, BlockPos pos, BlockState blockState) {
         return true;
     }
 
     @Override
-    public void performBonemeal(ServerLevel p_57021_, RandomSource p_57022_, BlockPos p_57023_, BlockState p_57024_) {
-        p_57024_.randomTick(p_57021_, p_57023_, p_57021_.random);
+    public void performBonemeal(ServerLevel level, RandomSource random, BlockPos pos, BlockState blockState) {
+        blockState.randomTick(level, pos, random);
     }
 }

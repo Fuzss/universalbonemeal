@@ -20,17 +20,17 @@ import java.util.Set;
 public class ChorusPlantBehavior extends ChorusFlowerBehavior {
 
     @Override
-    public boolean isValidBonemealTarget(LevelReader p_50897_, BlockPos p_50898_, BlockState p_50899_, boolean p_50900_) {
-        for (BlockPos flowerPosition : this.getFlowerPositions(p_50897_, p_50898_)) {
-            if (super.isValidBonemealTarget(p_50897_, flowerPosition, p_50897_.getBlockState(flowerPosition), p_50900_)) return true;
+    public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState blockState, boolean isClient) {
+        for (BlockPos flowerPosition : this.getFlowerPositions(level, pos)) {
+            if (super.isValidBonemealTarget(level, flowerPosition, level.getBlockState(flowerPosition), isClient)) return true;
         }
         return false;
     }
 
     @Override
-    public void performBonemeal(ServerLevel p_50893_, RandomSource p_50894_, BlockPos p_50895_, BlockState p_50896_) {
-        for (BlockPos flowerPosition : this.getFlowerPositions(p_50893_, p_50895_)) {
-            super.performBonemeal(p_50893_, p_50894_, flowerPosition, p_50893_.getBlockState(flowerPosition));
+    public void performBonemeal(ServerLevel level, RandomSource random, BlockPos pos, BlockState blockState) {
+        for (BlockPos flowerPosition : this.getFlowerPositions(level, pos)) {
+            super.performBonemeal(level, random, flowerPosition, level.getBlockState(flowerPosition));
         }
     }
 

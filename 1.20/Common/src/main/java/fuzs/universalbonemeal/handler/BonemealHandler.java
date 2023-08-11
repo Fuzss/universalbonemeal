@@ -106,7 +106,7 @@ public class BonemealHandler {
 
         public MultiBlockBehaviorData(Set<Block> targets, Supplier<BonemealBehavior> factory, BooleanSupplier config) {
             super(factory, config);
-            this.targets = ImmutableSet.copyOf(targets);
+            this.targets = targets;
         }
 
         @Override

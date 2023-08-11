@@ -8,7 +8,7 @@ public class ServerConfig implements ConfigCore {
     public boolean allowCactus = true;
     @Config(description = "Allow bone meal to work on sugar canes.")
     public boolean allowSugarCane = true;
-    @Config(description = "Allow bone meal to work on vines.")
+    @Config(description = "Allow bone meal to work on all kinds of vines.")
     public boolean allowVines = true;
     @Config(description = "Allow bone meal to work on nether warts.")
     public boolean allowNetherWart = true;
@@ -30,4 +30,6 @@ public class ServerConfig implements ConfigCore {
     public boolean allowDirt = true;
     @Config(description = "Allow bone meal to work on podzol for creating ferns and sweet berry bushes.")
     public boolean allowPodzol = true;
+    @Config(description = "Allow bone meal to work on spore blossoms for dropping an additional spore blossom per bone meal used.")
+    public boolean allowSporeBlossom = true;
 }
