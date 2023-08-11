@@ -8,6 +8,7 @@ import fuzs.universalbonemeal.config.ServerConfig;
 import fuzs.universalbonemeal.handler.BonemealHandler;
 import fuzs.universalbonemeal.world.level.block.behavior.*;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Blocks;
 import org.slf4j.Logger;
@@ -24,7 +25,6 @@ public class UniversalBoneMeal implements ModConstructor {
 
     @Override
     public void onConstructMod() {
-        UniversalBoneMeal.CONFIG.getHolder(ServerConfig.class).accept(BonemealHandler::invalidate);
         registerHandlers();
     }
 
@@ -53,5 +53,9 @@ public class UniversalBoneMeal implements ModConstructor {
         BonemealHandler.registerBehavior(Set.of(Blocks.DIRT, Blocks.COARSE_DIRT, Blocks.DIRT_PATH), DirtBehavior::new, () -> CONFIG.get(ServerConfig.class).allowDirt);
         BonemealHandler.registerBehavior(Blocks.PODZOL, PodzolBehavior::new, () -> CONFIG.get(ServerConfig.class).allowPodzol);
         BonemealHandler.registerBehavior(Blocks.SPORE_BLOSSOM, () -> new PopResourceBehavior(Direction.DOWN), () -> CONFIG.get(ServerConfig.class).allowSporeBlossom);
+    }
+    
+    public static ResourceLocation id(String path) {
+        return new ResourceLocation(MOD_ID, path);
     }
 }

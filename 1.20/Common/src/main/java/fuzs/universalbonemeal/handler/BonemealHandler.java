@@ -1,6 +1,5 @@
 package fuzs.universalbonemeal.handler;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import fuzs.puzzleslib.api.event.v1.core.EventResult;
@@ -15,10 +14,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
@@ -28,8 +24,7 @@ public class BonemealHandler {
     private static Map<Block, BonemealBehavior> blockToBehavior;
 
     public static EventResult onBonemeal(Level level, BlockPos pos, BlockState block, ItemStack stack) {
-        dissolve();
-        BonemealBehavior behavior = blockToBehavior.get(block.getBlock());
+        BonemealBehavior behavior = dissolve().get(block.getBlock());
         if (behavior != null) {
             if (behavior.isValidBonemealTarget(level, pos, block, level.isClientSide)) {
                 if (level instanceof ServerLevel) {
@@ -43,15 +38,18 @@ public class BonemealHandler {
         return EventResult.PASS;
     }
 
-    private static void dissolve() {
-        if (blockToBehavior == null) {
-            HashMap<Block, BonemealBehavior> map = Maps.newHashMap();
+    private static Map<Block, BonemealBehavior> dissolve() {
+        Map<Block, BonemealBehavior> map = blockToBehavior;
+        if (map == null) {
+            HashMap<Block, BonemealBehavior> newMap = Maps.newHashMap();
             for (AbstractBehaviorData behavior : BONE_MEAL_BEHAVIORS) {
                 if (behavior.allow()) {
-                    behavior.compile(map);
+                    behavior.compile(newMap);
                 }
             }
-            blockToBehavior = map;
+            return blockToBehavior = Collections.unmodifiableMap(newMap);
+        } else {
+            return map;
         }
     }
 
