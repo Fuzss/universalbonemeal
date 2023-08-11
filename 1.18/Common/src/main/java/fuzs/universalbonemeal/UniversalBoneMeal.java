@@ -60,7 +60,7 @@ public class UniversalBoneMeal implements ModConstructor {
         BonemealHandler.registerBehavior(Blocks.PODZOL, PodzolBehavior::new, () -> CONFIG.get(ServerConfig.class).allowPodzol);
         BonemealHandler.registerBehavior(Blocks.SPORE_BLOSSOM, () -> new PopResourceBehavior(Direction.DOWN), () -> CONFIG.get(ServerConfig.class).allowSporeBlossom);
     }
-
+    
     public static ResourceLocation id(String path) {
         return new ResourceLocation(MOD_ID, path);
     }
